@@ -100,25 +100,25 @@ const WordOfTheDay = ({ words }: WordOfTheDayProps) => {
   if (words.length === 0 || !wotd) return null;
 
   return (
-    <div className="rounded-lg bg-card p-5 shadow-card card-animate-in">
+    <div className="rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 p-5 shadow-lg shadow-orange-500/20 card-animate-in border border-orange-400/50">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Sparkles size={16} className="text-primary" />
-          <span className="font-sans text-xs font-medium tracking-wider uppercase text-muted-foreground/60">
+          <Sparkles size={16} className="text-white" />
+          <span className="font-sans text-xs font-semibold tracking-wider uppercase text-white/90">
             Word of the Day
           </span>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={toggleNotifications}
-            className="p-1.5 rounded text-muted-foreground/50 hover:text-foreground transition-colors"
+            className="p-1.5 rounded text-white/70 hover:text-white hover:bg-white/10 transition-colors"
             title={notifEnabled ? "Disable notifications" : "Enable daily notifications"}
           >
             {notifEnabled ? <Bell size={14} /> : <BellOff size={14} />}
           </button>
           <button
             onClick={() => selectWord(true)}
-            className="p-1.5 rounded text-muted-foreground/50 hover:text-foreground transition-colors"
+            className="p-1.5 rounded text-white/70 hover:text-white hover:bg-white/10 transition-colors"
             title="Shuffle"
           >
             <Shuffle size={14} />
@@ -126,14 +126,14 @@ const WordOfTheDay = ({ words }: WordOfTheDayProps) => {
         </div>
       </div>
 
-      <h3 className="font-serif text-2xl font-semibold text-foreground">{wotd.word}</h3>
-      <span className="text-xs font-sans font-medium tracking-wider uppercase text-muted-foreground mt-0.5 block">
+      <h3 className="font-serif text-2xl font-semibold text-white drop-shadow-sm">{wotd.word}</h3>
+      <span className="text-xs font-sans font-bold tracking-wider uppercase text-white/80 mt-0.5 block">
         {wotd.partOfSpeech}
       </span>
-      <p className="mt-2 font-sans text-sm leading-relaxed text-foreground/90">{wotd.definition}</p>
+      <p className="mt-2 font-sans text-sm leading-relaxed text-white/95">{wotd.definition}</p>
 
       {wotd.notes && (
-        <p className="mt-2 font-sans text-xs text-annotated italic border-l-2 border-primary/30 pl-3">
+        <p className="mt-3 font-sans text-xs text-white/90 italic border-l-2 border-white/40 pl-3">
           {wotd.notes}
         </p>
       )}
