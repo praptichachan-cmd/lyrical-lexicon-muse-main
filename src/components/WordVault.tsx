@@ -5,9 +5,10 @@ interface WordVaultProps {
   words: SavedWord[];
   onUpdateNotes: (id: string, notes: string) => void;
   onDelete: (id: string) => void;
+  onFindRhyme?: (word: string) => void;
 }
 
-const WordVault = ({ words, onUpdateNotes, onDelete }: WordVaultProps) => {
+const WordVault = ({ words, onUpdateNotes, onDelete, onFindRhyme }: WordVaultProps) => {
   if (words.length === 0) {
     return (
       <div className="text-center py-16">
@@ -25,7 +26,7 @@ const WordVault = ({ words, onUpdateNotes, onDelete }: WordVaultProps) => {
     <div className="space-y-4">
       {words.map((word, i) => (
         <div key={word.id} style={{ animationDelay: `${i * 60}ms` }}>
-          <WordCard word={word} onUpdateNotes={onUpdateNotes} onDelete={onDelete} />
+          <WordCard word={word} onUpdateNotes={onUpdateNotes} onDelete={onDelete} onFindRhyme={onFindRhyme} />
         </div>
       ))}
     </div>

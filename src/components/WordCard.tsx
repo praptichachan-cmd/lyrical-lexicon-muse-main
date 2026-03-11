@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, ChevronUp, Trash2, Copy, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2, Copy, Plus, Music } from "lucide-react";
 import type { SavedWord } from "@/lib/wordService";
 
 interface WordCardProps {
@@ -7,10 +7,11 @@ interface WordCardProps {
   onUpdateNotes: (id: string, notes: string) => void;
   onDelete?: (id: string) => void;
   onAdd?: () => void;
+  onFindRhyme?: (word: string) => void;
   variant?: "default" | "poet";
 }
 
-const WordCard = ({ word, onUpdateNotes, onDelete, onAdd, variant = "default" }: WordCardProps) => {
+const WordCard = ({ word, onUpdateNotes, onDelete, onAdd, onFindRhyme, variant = "default" }: WordCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const [notes, setNotes] = useState(word.notes);
   const [isEditing, setIsEditing] = useState(false);
@@ -50,6 +51,11 @@ const WordCard = ({ word, onUpdateNotes, onDelete, onAdd, variant = "default" }:
           </div>
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
+          {onFindRhyme && (
+            <button onClick={() => onFindRhyme(word.word)} className="p-1.5 rounded text-fuchsia-500/50 hover:text-fuchsia-500 hover:bg-fuchsia-500/10 transition-colors" title="Find Rhymes">
+              <Music size={14} />
+            </button>
+          )}
           <button onClick={copyWord} className="p-1.5 rounded text-muted-foreground/50 hover:text-muted-foreground transition-colors" title="Copy">
             <Copy size={14} />
           </button>

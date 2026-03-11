@@ -8,9 +8,10 @@ interface PoetSearchProps {
   onUpdateNotes: (id: string, notes: string) => void;
   onDelete: (id: string) => void;
   onSaveNew: (word: SavedWord) => void;
+  onFindRhyme?: (word: string) => void;
 }
 
-const PoetSearch = ({ onUpdateNotes, onDelete, onSaveNew }: PoetSearchProps) => {
+const PoetSearch = ({ onUpdateNotes, onDelete, onSaveNew, onFindRhyme }: PoetSearchProps) => {
   const [vaultResults, setVaultResults] = useState<SavedWord[]>([]);
   const [apiResults, setApiResults] = useState<SavedWord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -107,6 +108,7 @@ const PoetSearch = ({ onUpdateNotes, onDelete, onSaveNew }: PoetSearchProps) => 
                 word={word}
                 onUpdateNotes={onUpdateNotes}
                 onDelete={onDelete}
+                onFindRhyme={onFindRhyme}
                 variant="poet"
               />
             </div>
@@ -129,6 +131,7 @@ const PoetSearch = ({ onUpdateNotes, onDelete, onSaveNew }: PoetSearchProps) => 
                   onUpdateNotes={onUpdateNotes}
                   onDelete={isSaved ? onDelete : undefined}
                   onAdd={isSaved ? undefined : () => onSaveNew(word)}
+                  onFindRhyme={onFindRhyme}
                   variant="poet"
                 />
               </div>

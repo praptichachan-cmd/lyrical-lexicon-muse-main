@@ -4,6 +4,7 @@ import { Settings, User } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import WordVault from "@/components/WordVault";
 import PoetSearch from "@/components/PoetSearch";
+import RhymeSearch from "@/components/RhymeSearch";
 import WordOfTheDay from "@/components/WordOfTheDay";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -23,9 +24,10 @@ const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [words, setWords] = useState<SavedWord[]>(getVault);
-  const [activeTab, setActiveTab] = useState<"lexicon" | "poet">("lexicon");
+  const [activeTab, setActiveTab] = useState<"lexicon" | "poet" | "rhymes">("lexicon");
   const [isLoading, setIsLoading] = useState(false);
   const [lastSearched, setLastSearched] = useState<{ word: SavedWord; isExisting: boolean } | null>(null);
+  const [initialRhymeQuery, setInitialRhymeQuery] = useState("");
 
   // Notifications
   const { permission, requestPermission, notifyDailyWord } = useNotifications();
@@ -100,6 +102,12 @@ const Index = () => {
     setWords(updated);
   }, []);
 
+  const handleFindRhyme = useCallback((word: string) => {
+    setInitialRhymeQuery(word);
+    setActiveTab("rhymes");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -171,14 +179,24 @@ const Index = () => {
             >
               Poet's Search
             </button>
+            <button
+              onClick={() => setActiveTab("rhymes")}
+              className={`px-5 py-2 rounded-md font-sans text-sm transition-all duration-200 ${
+                activeTab === "rhymes"
+                  ? "bg-fuchsia-500/10 shadow-card text-fuchsia-500 font-medium border border-fuchsia-500/20"
+                  : "text-muted-foreground hover:text-fuchsia-500 hover:bg-fuchsia-500/5"
+              }`}
+            >
+              Rhymes
+            </button>
           </div>
         </div>
       </header>
 
       {/* Content */}
       <main className="max-w-2xl mx-auto px-5 py-8">
-        {activeTab === "lexicon" ? (
-          <div className="space-y-8">
+        {activeTab === "lexicon" && (
+          <div className="space-y-8 animate-in fade-in duration-500">
             {/* Word of the Day */}
             <WordOfTheDay words={words} />
 
@@ -194,6 +212,7 @@ const Index = () => {
                     words={[lastSearched.word]}
                     onUpdateNotes={handleUpdateNotes}
                     onDelete={handleDelete}
+                    onFindRhyme={handleFindRhyme}
                   />
                 </div>
               </div>
@@ -203,15 +222,27 @@ const Index = () => {
               <h2 className="font-serif text-lg text-muted-foreground/70 mb-4">
                 {words.length > 0 ? "Your Words" : ""}
               </h2>
-              <WordVault words={words} onUpdateNotes={handleUpdateNotes} onDelete={handleDelete} />
+              <WordVault 
+                words={words} 
+                onUpdateNotes={handleUpdateNotes} 
+                onDelete={handleDelete} 
+                onFindRhyme={handleFindRhyme}
+              />
             </div>
           </div>
-        ) : (
+        )}
+
+        {activeTab === "poet" && (
           <PoetSearch
             onUpdateNotes={handleUpdateNotes}
             onDelete={handleDelete}
             onSaveNew={handleSaveNew}
+            onFindRhyme={handleFindRhyme}
           />
+        )}
+
+        {activeTab === "rhymes" && (
+          <RhymeSearch initialQuery={initialRhymeQuery} />
         )}
       </main>
     </div>
