@@ -1,7 +1,7 @@
 import { useState } from "react";
 import SearchBar from "./SearchBar";
 import WordCard from "./WordCard";
-import { searchVault, fetchDefinition, entryToSavedWord, type SavedWord } from "@/lib/wordService";
+import { searchVault, fetchDefinition, entryToSavedWord, findInVault, type SavedWord } from "@/lib/wordService";
 import { Globe } from "lucide-react";
 
 interface PoetSearchProps {
@@ -120,16 +120,20 @@ const PoetSearch = ({ onUpdateNotes, onDelete, onSaveNew }: PoetSearchProps) => 
           <p className="text-xs font-sans tracking-wider uppercase text-muted-foreground/50 text-center mb-3">
             Synonyms from the dictionary
           </p>
-          {apiResults.map(word => (
-            <div key={word.id} className="card-animate-in">
-              <WordCard
-                word={word}
-                onUpdateNotes={onUpdateNotes}
-                onDelete={onDelete}
-                variant="poet"
-              />
-            </div>
-          ))}
+          {apiResults.map(word => {
+            const isSaved = !!findInVault(word.word);
+            return (
+              <div key={word.id} className="card-animate-in">
+                <WordCard
+                  word={word}
+                  onUpdateNotes={onUpdateNotes}
+                  onDelete={isSaved ? onDelete : undefined}
+                  onAdd={isSaved ? undefined : () => onSaveNew(word)}
+                  variant="poet"
+                />
+              </div>
+            );
+          })}
         </div>
       )}
 

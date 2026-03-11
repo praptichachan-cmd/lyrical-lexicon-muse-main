@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { ChevronDown, ChevronUp, Trash2, Copy } from "lucide-react";
+import { ChevronDown, ChevronUp, Trash2, Copy, Plus } from "lucide-react";
 import type { SavedWord } from "@/lib/wordService";
 
 interface WordCardProps {
   word: SavedWord;
   onUpdateNotes: (id: string, notes: string) => void;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
+  onAdd?: () => void;
   variant?: "default" | "poet";
 }
 
-const WordCard = ({ word, onUpdateNotes, onDelete, variant = "default" }: WordCardProps) => {
+const WordCard = ({ word, onUpdateNotes, onDelete, onAdd, variant = "default" }: WordCardProps) => {
   const [expanded, setExpanded] = useState(false);
   const [notes, setNotes] = useState(word.notes);
   const [isEditing, setIsEditing] = useState(false);
@@ -52,9 +53,16 @@ const WordCard = ({ word, onUpdateNotes, onDelete, variant = "default" }: WordCa
           <button onClick={copyWord} className="p-1.5 rounded text-muted-foreground/50 hover:text-muted-foreground transition-colors" title="Copy">
             <Copy size={14} />
           </button>
-          <button onClick={() => onDelete(word.id)} className="p-1.5 rounded text-muted-foreground/50 hover:text-destructive transition-colors" title="Remove">
-            <Trash2 size={14} />
-          </button>
+          {onAdd && (
+            <button onClick={onAdd} className="p-1.5 rounded text-primary hover:text-primary transition-colors bg-primary/10" title="Save to Lexicon">
+              <Plus size={14} />
+            </button>
+          )}
+          {onDelete && !onAdd && (
+            <button onClick={() => onDelete(word.id)} className="p-1.5 rounded text-muted-foreground/50 hover:text-destructive transition-colors" title="Remove">
+              <Trash2 size={14} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -132,7 +140,7 @@ const WordCard = ({ word, onUpdateNotes, onDelete, variant = "default" }: WordCa
       )}
 
       {/* Poet variant label */}
-      {variant === "poet" && (
+      {variant === "poet" && !onAdd && (
         <p className="mt-5 text-center text-xs font-sans tracking-wider text-muted-foreground/50 uppercase">
           From your lexicon
         </p>
