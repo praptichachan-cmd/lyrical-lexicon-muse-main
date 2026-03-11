@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 216 33% 97%;
+    --foreground: 252 13% 27%;
+
+    --card: 240 19% 93%;
+    --card-foreground: 252 13% 27%;
+
+    --popover: 216 33% 97%;
+    --popover-foreground: 252 13% 27%;
+
+    --primary: 186 30% 71%;
+    --primary-foreground: 252 13% 20%;
+
+    --secondary: 240 19% 90%;
+    --secondary-foreground: 252 13% 27%;
+
+    --muted: 240 12% 90%;
+    --muted-foreground: 244 8% 45%;
+
+    --accent: 186 30% 71%;
+    --accent-foreground: 252 13% 20%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 12% 86%;
+    --input: 240 12% 86%;
+    --ring: 186 30% 71%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --annotated: 244 8% 45%;
+    --search-glow: 186 30% 71%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Lora', serif;
+  }
+}
+
+@keyframes search-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 hsl(var(--search-glow) / 0);
+  }
+  50% {
+    box-shadow: 0 0 20px 4px hsl(var(--search-glow) / 0.35);
+  }
+}
+
+.search-loading {
+  animation: search-pulse 2s ease-in-out infinite;
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-animate-in {
+  animation: card-enter 0.4s ease-out forwards;
+}
+
+@keyframes poet-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.poet-card-reveal {
+  animation: poet-reveal 0.6s ease-out forwards;
+}
