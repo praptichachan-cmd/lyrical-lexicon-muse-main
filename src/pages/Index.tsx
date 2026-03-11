@@ -163,8 +163,8 @@ const Index = () => {
               onClick={() => setActiveTab("lexicon")}
               className={`px-5 py-2 rounded-md font-sans text-sm transition-all duration-200 ${
                 activeTab === "lexicon"
-                  ? "bg-card shadow-card text-foreground font-medium"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-emerald-500/10 shadow-card text-emerald-500 font-medium border border-emerald-500/20"
+                  : "text-muted-foreground hover:text-emerald-500 hover:bg-emerald-500/5"
               }`}
             >
               Lexicon
@@ -173,8 +173,8 @@ const Index = () => {
               onClick={() => setActiveTab("poet")}
               className={`px-5 py-2 rounded-md font-sans text-sm transition-all duration-200 ${
                 activeTab === "poet"
-                  ? "bg-card shadow-card text-foreground font-medium"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-indigo-500/10 shadow-card text-indigo-500 font-medium border border-indigo-500/20"
+                  : "text-muted-foreground hover:text-indigo-500 hover:bg-indigo-500/5"
               }`}
             >
               Poet's Search
