@@ -12,7 +12,7 @@ interface PoetSearchProps {
 
 const PoetSearch = ({ onUpdateNotes, onDelete, onSaveNew }: PoetSearchProps) => {
   const [vaultResults, setVaultResults] = useState<SavedWord[]>([]);
-  const [apiResult, setApiResult] = useState<SavedWord | null>(null);
+  const [apiResults, setApiResults] = useState<SavedWord[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isGlobalLoading, setIsGlobalLoading] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -22,7 +22,7 @@ const PoetSearch = ({ onUpdateNotes, onDelete, onSaveNew }: PoetSearchProps) => 
   const handleSearch = async (query: string) => {
     setIsLoading(true);
     setVaultResults([]);
-    setApiResult(null);
+    setApiResults([]);
     setNoResult(false);
     setSearched(true);
     setLastQuery(query);
@@ -41,14 +41,42 @@ const PoetSearch = ({ onUpdateNotes, onDelete, onSaveNew }: PoetSearchProps) => 
   const handleGlobalSearch = async () => {
     if (!lastQuery) return;
     setIsGlobalLoading(true);
+    
+    // First, find the entry for the searched word to get its synonyms
     const entry = await fetchDefinition(lastQuery);
-    if (entry) {
-      const newWord = entryToSavedWord(entry);
-      // NOTE: We DO NOT call onSaveNew(newWord) here anymore. 
-      // The word simply displays via apiResult.
-      setApiResult(newWord);
-      setNoResult(false);
+    
+    if (entry && entry.meanings) {
+      // Gather all synonyms across all meanings
+      const allSynonyms = new Set<string>();
+      entry.meanings.forEach(m => {
+        m.synonyms?.forEach(s => allSynonyms.add(s));
+      });
+      
+      const synonymsArray = Array.from(allSynonyms).slice(0, 5); // take up to 5 synonyms
+      
+      if (synonymsArray.length > 0) {
+        // Fetch definitions for each of these synonyms to display them as full word cards
+        const fetchedSynonyms = await Promise.all(
+          synonymsArray.map(async (syn) => {
+            const synEntry = await fetchDefinition(syn);
+            return synEntry ? entryToSavedWord(synEntry) : null;
+          })
+        );
+        
+        const validSynonyms = fetchedSynonyms.filter((w): w is SavedWord => w !== null);
+        
+        if (validSynonyms.length > 0) {
+          setApiResults(validSynonyms);
+          setNoResult(false);
+          setIsGlobalLoading(false);
+          return;
+        }
+      }
     }
+    
+    // If no synonyms were found or fetching them failed
+    setNoResult(true);
+    setApiResults([]);
     setIsGlobalLoading(false);
   };
 
@@ -86,25 +114,27 @@ const PoetSearch = ({ onUpdateNotes, onDelete, onSaveNew }: PoetSearchProps) => 
         </div>
       )}
 
-      {/* API result */}
-      {apiResult && (
-        <div className="mt-4">
+      {/* API result synonyms */}
+      {apiResults.length > 0 && (
+        <div className="mt-4 space-y-3">
           <p className="text-xs font-sans tracking-wider uppercase text-muted-foreground/50 text-center mb-3">
-            A new discovery
+            Synonyms from the dictionary
           </p>
-          <div className="card-animate-in">
-            <WordCard
-              word={apiResult}
-              onUpdateNotes={onUpdateNotes}
-              onDelete={onDelete}
-              variant="poet"
-            />
-          </div>
+          {apiResults.map(word => (
+            <div key={word.id} className="card-animate-in">
+              <WordCard
+                word={word}
+                onUpdateNotes={onUpdateNotes}
+                onDelete={onDelete}
+                variant="poet"
+              />
+            </div>
+          ))}
         </div>
       )}
 
       {/* Global Dictionary Button — shown when API hasn't been searched yet */}
-      {searched && !apiResult && (
+      {searched && apiResults.length === 0 && (
         <div className="text-center space-y-4 py-8">
           {vaultResults.length === 0 && (
             <div>
