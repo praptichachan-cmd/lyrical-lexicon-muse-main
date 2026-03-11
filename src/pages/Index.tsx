@@ -6,6 +6,8 @@ import WordVault from "@/components/WordVault";
 import PoetSearch from "@/components/PoetSearch";
 import RhymeSearch from "@/components/RhymeSearch";
 import WordOfTheDay from "@/components/WordOfTheDay";
+import InspirationFAB from "@/components/InspirationFAB";
+import InspirationOverlay from "@/components/InspirationOverlay";
 import { useAuth } from "@/hooks/useAuth";
 import { useNotifications } from "@/hooks/useNotifications";
 import { applyTheme, getActiveTheme } from "@/lib/themeService";
@@ -28,6 +30,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [lastSearched, setLastSearched] = useState<{ word: SavedWord; isExisting: boolean } | null>(null);
   const [initialRhymeQuery, setInitialRhymeQuery] = useState("");
+  const [isInspirationOpen, setIsInspirationOpen] = useState(false);
 
   // Notifications
   const { permission, requestPermission, notifyDailyWord } = useNotifications();
@@ -245,6 +248,18 @@ const Index = () => {
           <RhymeSearch initialQuery={initialRhymeQuery} />
         )}
       </main>
+
+      {/* Floating Action Button */}
+      {!isInspirationOpen && (
+        <InspirationFAB onClick={() => setIsInspirationOpen(true)} />
+      )}
+
+      {/* Inspiration Overlay Modal */}
+      <InspirationOverlay 
+        isOpen={isInspirationOpen} 
+        onClose={() => setIsInspirationOpen(false)} 
+        vaultWords={words} 
+      />
     </div>
   );
 };
