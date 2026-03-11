@@ -6,6 +6,7 @@ import WordVault from "@/components/WordVault";
 import PoetSearch from "@/components/PoetSearch";
 import WordOfTheDay from "@/components/WordOfTheDay";
 import { useAuth } from "@/hooks/useAuth";
+import { useNotifications } from "@/hooks/useNotifications";
 import { applyTheme, getActiveTheme } from "@/lib/themeService";
 import {
   getVault,
@@ -25,6 +26,28 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState<"lexicon" | "poet">("lexicon");
   const [isLoading, setIsLoading] = useState(false);
   const [lastSearched, setLastSearched] = useState<{ word: SavedWord; isExisting: boolean } | null>(null);
+
+  // Notifications
+  const { permission, requestPermission, notifyDailyWord } = useNotifications();
+
+  // Find today's word from the vault (replicates logic in WordOfTheDay.tsx without needing mounting)
+  const getWordOfTheDay = useCallback((vaultWords: SavedWord[]) => {
+    if (vaultWords.length === 0) return null;
+    const now = new Date();
+    const seed = now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+    const index = Math.abs(Math.sin(seed) * 10000) % vaultWords.length;
+    return vaultWords[Math.floor(index)];
+  }, []);
+
+  // Set the word of the day notification on mount/vault change
+  useEffect(() => {
+    // Attempt to notify immediately if permitted and we have words.
+    // The hook natively protects against spamming more than once a day.
+    if (words.length > 0 && permission === 'granted') {
+      const todayWord = getWordOfTheDay(words);
+      notifyDailyWord(todayWord);
+    }
+  }, [words, permission, notifyDailyWord, getWordOfTheDay]);
 
   // Apply saved theme on mount
   useEffect(() => {
@@ -101,6 +124,14 @@ const Index = () => {
               </p>
             </div>
             <div className="w-20 flex justify-end gap-1">
+              {permission !== 'granted' && permission !== 'denied' && (
+                <button
+                  onClick={() => requestPermission()}
+                  className="px-3 py-1.5 mr-2 rounded-lg bg-primary/10 text-primary font-sans text-xs font-medium hover:bg-primary/20 transition-colors hidden sm:block"
+                >
+                  Enable Notifications
+                </button>
+              )}
               <button
                 onClick={() => navigate("/settings")}
                 className="p-2 rounded-lg text-muted-foreground/50 hover:text-foreground transition-colors"
